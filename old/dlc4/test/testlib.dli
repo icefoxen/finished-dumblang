@@ -1,0 +1,11 @@
+;  Interface file for: testlib
+;  WARNING!  This file is machine-generated.  DO NOT EDIT BY HAND, please.
+;  The module reader doesn't do semantic checks, so be nice to it.  Thanks.
+
+use test3
+
+
+func add  x int, y int (int): INTERFACE end
+func sub  x int, y int (int): INTERFACE end
+func test  x int (int): INTERFACE end
+func sum4  x int, y int, z int, a int (int): INTERFACE end

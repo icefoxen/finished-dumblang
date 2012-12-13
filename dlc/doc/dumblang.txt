@@ -1,0 +1,295 @@
+Okay.  This is still Dumblang, though it is getting smarter and smarter.  It
+now does integer and floating-point math, a bit of primative logic and
+iteration, and so on.  It even has a somewhat stupid module system.
+
+Someday, sometime, it is going to become Sunrise.  Or maybe even Sunset.  Or
+really... Grace would be a good name for a programming language.
+
+In this version, we are going to add a few things:
+
+*Make a simple library-path
+*Add references/pointers
+
+I also want to fix any outstanding bugs I find (maybe even the weird absence of
+the "not" instruction that I didn't bother with last version).
+
+
+DUMBLANG
+
+LEXICAL ELEMENTS
+Case-sensitive.  Identifiers are the usual a-z, A-Z, 0-9, and underscore.
+They must not start with numbers.
+
+Line comments start with ;.  Block comments start with /- and end with -/.
+They may be nested.
+
+Reserved words and symbols:
+func while do end if else var import use
+( ) + - / * % | :
+and or not xor
+
+VALUES AND TYPES
+There are integer and floating-point types, int and float.  Any number with a
+decimal in it is a float.  Both are 32-bits only.  Integers may be specified
+with 0x, 0o or 0b prefixes to denote hex, octal or binary numbers.
+
+Any integer may be implicitly coerced into a float.  To coerce a float to an
+integer, you must do it explicitly: |int <expr>|.  <expr> can be any
+expression.  You could also do |float <expr>| to explicitly convert an int to
+a float.
+
+Right now, there are only numbers.  All functions must return a value.
+
+Integers are used as boolean values; 0 is false, anything non-zero is true.
+
+There are no arrays or structurs.
+
+SYNTAX
+We have... like, six syntactic forms: Function definitions, variable
+declerations, while-loops, if/else statements, function calls, and math/logic
+operations.
+
+Function definition:
+func <name> [<argname> <argtype> [, <argname> <argtype> ...]] (<retval>):
+   <body>
+end
+
+Variable declerations:
+var <name> <type>: <default value>
+
+Right now, the only variables are local variables inside functions.  
+All variables must have a default value.
+
+While loops:
+while <cond> do
+   <body>
+end
+
+While loops return the value of the last statement in the body.  <cond> must
+return an integer.
+
+If statements:
+if <cond> then
+   <body>
+[elif <cond> then
+   <body>]*
+[else
+   <body>]
+end
+
+If statments always return the type of their first argument.  This is slightly
+broken, I think, but I'm not sure how to make it better while still having
+strict typing and if being an expression.  We may just cut that second
+requirement and have if return a None type... once we have one.  Hmph, less
+functional though...
+
+
+All math operations will return the most-general type of their arguments.  For
+instance, (+ 10 20.5) will return a float, 30.5.  (+ 10 20) will return an
+int, 30.
+Math operations have a lisp-y syntax.  This may change.  The chief benefits
+are simplicity and unambiguity.
+Someday, we'll have short-circuit evaluation for logical operations.
+XXX: Someday, logical NOT will also work.
+(+ arg1 arg2 ...)
+(- arg1 arg2 ...)
+(* arg1 arg2 ...)
+(/ arg1 arg2 ...)
+(% arg1 arg2 ...)
+(and arg1 arg2 ...)
+(or arg1 arg2 ...)
+(xor arg1 arg2 ...)
+(not arg1)
+(< arg1 arg2)
+(> arg1 arg2)
+(<= arg1 arg2)
+(>= arg1 arg2)
+(= arg1 arg2 ...)
+(= arg1 arg2 ...)
+
+(= arg1 arg2 arg3) is equivilant to (and (= arg1 arg2) (= arg2 arg3))
+
+FUNCTIONS AND SCOPE
+Functions cannot be nested, yet.  While loops and such do NOT create new
+scopes, though they should in the future (someday, when we have generalized
+scope blocks (XXX: Wait, can we do that yet?)).
+
+Functions will, someday, be first-class values.  There will be anonymous
+functions too, and higher-order functions.  The future of closures still
+depends on implementation issues.
+
+VARIABLES
+...yeah.  They happen.  They always have an initialization value.  That's all.
+var foo type <- value
+
+EXPRESSIONS
+Just about everything is an expression.  Including variable declerations.
+Everything returns a value.  ...yeah.
+Someday there will be a NONE value/type that some expressions (like var decls
+and assignments) return.  It will be impossible to assign a NONE to a
+variable.  Returning NONE means returning nothing, void.  It's an error.  NONE
+is not a value, it is a signal to the compiler that a value does not exist.
+(funcname args ...)
+
+ARRAYS
+Arrays are bounds-checked.  Attached to each is an integer containing it's
+length.  All accesses to arrays should be checked; the compiler may omit these
+checks if it can prove they're not necessary, or by user command.
+
+REFERENCES
+References, at the moment, are basically pointers.  This may change someday to
+something more reasonable.
+You declare a reference like so:
+var foo int <- 10
+var bar ref int <- (addr foo)
+
+The operation (addr x) gets the address of x.
+
+To assign a new value to a reference:
+var bop int <- 10
+bar <- (addr bop)
+
+To assign a new value to the variable pointed to by the reference:
+(! bar) <- 42
+
+To get the value of the variable pointed to by the reference:
+bop <- (! bar)
+
+Note that you can NOT do arithmatic on references.  You can NOT have
+uninitialized references.
+
+Also note that references are just numbers, and if necessary, you can in fact
+do arithmatic on them.
+
+var fooref ref int <- something
+var fooint int <- |int fooref|
+fooint <- (+ fooint 1)
+fooref <- |ref int fooint|
+
+Null references do not exist, at the moment.  They may exist later, at which
+point accessing a null reference will throw an exception.
+
+
+
+ERROR HANDLING
+...what error handling?
+The compiler should hopefully always emit halfway-decent error messages, at
+least for the semantic analysis bit, which is where most errors will occur.
+The error reporting for the code generator...  yeah.  I was tired that night.
+
+Someday, a real exception system will exist.
+
+OBJECT SYSTEM
+There will be one someday.  Of some form or another.  Maybe.  The choices are,
+in order of efficiency/ease of implementation and in reverse order of
+fun-ness:
+*Static, like Java and C++
+*Dynamic, like Objective C and Smalltalk
+*Really Dynamic/Prototype-based, like Self and Io (Io is cool stuff, dude)
+*Wiggy/Multiple Dispatch, like Dylan and Lisp
+
+Structures = objects?  Few reasons not to, really, and it makes parametric
+polymorphism less important (though still vital for containers to work right).
+It also makes allocation nicer.
+Simple static or dynamic structures will probably work out okay.
+
+
+MEMORY MODEL AND CALLING CONVENTIONS
+Calling-conventions are vaguely C-ish.  The caller pushes the function
+arguments on the stack in I-don't-know-what-order, but eventually it should
+probably be the same right-to-left order of C, to make FFI simple.  
+No register allocation is done.  It's hardly worth it anyway, at least not for
+x86 processors.  All temporaries are put, temporarily, on the stack.  All
+return values are put in the register eax.
+
+Speaking of allocation, learn from Cocoa.  Explicit refcounting, reference
+pools, et cetera.  It looks VERY nice.  It doesn't eliminate memory leaks, but
+does eliminate dangling pointers, and doing it manually is much more efficient
+and flexible than dynamically.
+
+MODULES AND COMPILATION
+Right now, the module namespace is flat, not tree-like.  However, there are
+LOTS of internal allowances for a heirarchical namespace, so it may happen in
+the future.
+The module-system is essentially lazy; you can have circular dependancies of
+modules and it'll still work.  However, this means you can also have
+potentially infinate mutual recursions between modules.  Oh no.  It still
+actually works, if you do a bit of massaging of the compiler order.  Someday
+this massaging will happen automatically.
+KISS.  Flat module namespace.  One file per module, the module name is the
+file name.  This may change later, but for now it's quite usable and
+wonderfully simple.
+
+
+Module imports are explicit, of one of the forms
+use <modulename> [, <modulename> ...]
+import <modulename> [, <modulename> ...] 
+
+Module exports are also explicit, of the form
+export <name> [, <name> ...]
+A name may be a function, a global, or a constant (once we have those latter
+two things).  If there is no export decleration, nothing is exported.
+
+The use decleration means the module is imported, into a new scope, which
+must be accessed by the form <modulename>:<value>.  The import decleration
+means the module is imported into the scope of the current module.  
+XXX: The import decleration also doesn't work right now; fixing it would
+probably take a bit of architecture re-design I don't want to bother with.
+
+If a name in a module conflicts with another module or the current module, it
+is an error.  For instance:
+
+<in file Foo.dl>
+export a, b
+func a (int): ... end
+func b arg float (int): ... end
+
+<file Bar.dl>
+import Foo
+func main (int):
+   (a)
+   (b 10.5)
+end
+
+<file Bop.dl>
+use Foo
+func main (int):
+   (Foo:a)
+   (Foo:b 10.5)
+end
+
+Modules will be able to be grouped together into libraries.  Someday, somehow.
+Yeah.
+
+Now, for the nitty-gritty details.  Whenever a .dl file is compiled, it will
+result in an object file of one type or another, and a .dli file of the same
+name, which contains the module interface.  The interface consists of all the
+exported values, as well as (eventually) all type definitions.  
+
+An interface file will contain a bunch of lines, each defining a function
+header pretty much in the same syntax as a normal source file.
+The way it'll work is this:
+If a source file imports a module, the compiler looks for that module's
+interface file.  If it doesn't exist, it's an error.  Otherwise, it slurps it
+up and adds all the definitions to the symbol table.  Things are then resolved
+as normal.
+
+On a more low-level note, the module system mangles all the symbols in an
+object file in a consistant and sane way.  First it escapes any underscores
+with a double-underscore (foo_bar becomes foo__bar), then it prepends the
+module name/path and an underscore (bop:foo_bar becomes bop_foo__bar).  This
+gives everything a nice, unique, consistant identifier at the assembly-level.
+
+
+LOW-LEVEL NOTES
+Right now, the code generation is horribly intel-specific, and the assembly
+created is horribly Linux-specific.  However, the latter at least shouldn't be
+THAT hard to fix.  The assembler used is nasm.  
+
+If you make a function called "main" in a module, the compiler will generate
+code to run it when the program is loaded.  This is the entry-point of the
+program.
+
+
+STANDARD LIBRARY
+At the moment?  Dream on.

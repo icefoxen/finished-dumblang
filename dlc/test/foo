@@ -1,0 +1,348 @@
+Parsing succeeded!  Have a cookie!
+IntNot
+So full of hate...
+NOPDECL
+
+NOPDECL
+
+FUNDECL id x  (int):
+ (VAR x)
+
+ENDFUNDECL id
+
+FUNDECL idf x  (float):
+ (VAR x)
+
+ENDFUNDECL idf
+
+FUNDECL addStuff y x  (int):
+ (IntAdd (VAR y)
+(VAR x)
+)
+
+ENDFUNDECL addStuff
+
+FUNDECL testTrivial  (int):
+ (IntAdd INTLIT:{20}
+INTLIT:{10}
+)
+
+ENDFUNDECL testTrivial
+
+FUNDECL testVars  (int):
+ VARDECL x: int = INTLIT:{15}
+VARDECL y: int = INTLIT:{25}
+VARDECL z: float = INTLIT:{20}
+CAST from float to int: (FloatSub (VAR z)
+CAST from int to float: (VAR y)
+CAST from int to float: (VAR x)
+)
+
+ENDFUNDECL testVars
+
+FUNDECL testArgs y x  (int):
+ (IntMul (VAR y)
+(VAR x)
+)
+
+ENDFUNDECL testArgs
+
+FUNDECL testArgsAndVars x  (int):
+ VARDECL y: int = INTLIT:{2}
+(IntDiv (VAR y)
+(VAR x)
+)
+
+ENDFUNDECL testArgsAndVars
+
+FUNDECL testLogic  (int):
+ (IntAnd (IntEq INTLIT:{10}
+INTLIT:{10}
+)
+(IntEq INTLIT:{10}
+INTLIT:{10}
+)
+)
+
+ENDFUNDECL testLogic
+
+FUNDECL float2int f  (int):
+ CAST from float to int: (VAR f)
+
+ENDFUNDECL float2int
+
+FUNDECL floatMath g f  (float):
+ (FloatSub (FloatAdd (FloatMul (FloatDiv FLOATLIT:{2.000000}
+FLOATLIT:{1.000000}
+)
+(VAR g)
+)
+(VAR f)
+)
+FLOATLIT:{3.000000}
+)
+
+ENDFUNDECL floatMath
+
+FUNDECL int2float i  (float):
+ CAST from int to float: (VAR i)
+
+ENDFUNDECL int2float
+
+FUNDECL loopTest i  (float):
+ VARDECL j: int = (VAR i)
+VARDECL m: float = INTLIT:{0}
+LABEL .loopHeadSYM1:
+IF (IntLt (IntMul INTLIT:{2}
+(VAR i)
+)
+(VAR j)
+) THEN
+   (ASSIGN (VAR j) (IntAdd INTLIT:{1}
+(VAR j)
+))
+(ASSIGN (VAR m) (FloatAdd CAST from int to float: INTLIT:{1}
+(VAR m)
+))
+(GOTO .loopHeadSYM1)
+
+ELSE   
+ENDIF
+(VAR m)
+
+ENDFUNDECL loopTest
+
+FUNDECL floatComp  (float):
+ VARDECL f: float = (FloatMul FLOATLIT:{1.500000}
+FLOATLIT:{10.000000}
+)
+VARDECL i: int = INTLIT:{0}
+LABEL .loopHeadSYM2:
+IF (FloatLt FLOATLIT:{100.000000}
+(VAR f)
+) THEN
+   (ASSIGN (VAR f) (FloatMul FLOATLIT:{1.500000}
+(VAR f)
+))
+(ASSIGN (VAR i) (IntAdd INTLIT:{1}
+(VAR i)
+))
+(GOTO .loopHeadSYM2)
+
+ELSE   
+ENDIF
+(VAR f)
+
+ENDFUNDECL floatComp
+
+FUNDECL notTest  (int):
+ (IntNot INTLIT:{1}
+)
+
+ENDFUNDECL notTest
+
+FUNDECL ifTest x  (int):
+ IF (IntGt INTLIT:{10}
+(VAR x)
+) THEN
+   INTLIT:{10}
+
+ELSE   IF (IntGt INTLIT:{5}
+(VAR x)
+) THEN
+   INTLIT:{5}
+
+ELSE   IF (IntGt INTLIT:{0}
+(VAR x)
+) THEN
+   INTLIT:{1}
+
+ELSE   (IntSub (VAR x)
+INTLIT:{0}
+)
+
+ENDIF
+
+ENDIF
+
+ENDIF
+
+ENDFUNDECL ifTest
+
+FUNDECL do_stuff  (int):
+ INTLIT:{10}
+
+ENDFUNDECL do_stuff
+
+FUNDECL refTest a  (int):
+ VARDECL x: ref int = (ADDRESS (VAR a))
+VARDECL y: int = CAST from ref int to int: (VAR x)
+(IntAdd (DEREF CAST from int to ref int: (VAR y))
+INTLIT:{5}
+)
+
+ENDFUNDECL refTest
+
+FUNDECL refTest2 a  (int):
+ VARDECL x: ref int = (ADDRESS (VAR a))
+(ASSIGN (DEREF (VAR x)) INTLIT:{15})
+(DEREF (VAR x))
+
+ENDFUNDECL refTest2
+
+FUNDECL changeRef a  (int):
+ (ASSIGN (DEREF (VAR a)) INTLIT:{13})
+INTLIT:{91}
+
+ENDFUNDECL changeRef
+
+FUNDECL refTest3  (int):
+ VARDECL a: int = INTLIT:{91}
+(FUNCALL id (VAR a)
+)
+(FUNCALL changeRef (ADDRESS (VAR a))
+)
+(VAR a)
+
+ENDFUNDECL refTest3
+
+FUNDECL testArray  (int):
+ VARDECL a: array: int = ARRAYLIT:{ INTLIT:{1} INTLIT:{2} INTLIT:{3} INTLIT:{4} INTLIT:{5}}
+VARDECL b: array: array: int = ARRAYLIT:{ ARRAYLIT:{ INTLIT:{1} INTLIT:{2} INTLIT:{3} INTLIT:{4} INTLIT:{5}} ARRAYLIT:{ INTLIT:{5} INTLIT:{4} INTLIT:{3} INTLIT:{2} INTLIT:{1}}}
+(AREF (VAR a) INTLIT:{1})
+
+ENDFUNDECL testArray
+
+FUNDECL testArray2  (array: int):
+ ARRAYLIT:{ INTLIT:{15} INTLIT:{25} INTLIT:{35}}
+
+ENDFUNDECL testArray2
+
+FUNDECL recursionTest i  (int):
+ IF (IntAnd (IntEq INTLIT:{1}
+(VAR i)
+)
+) THEN
+   (VAR i)
+
+ELSE   (IntMul (FUNCALL recursionTest (IntSub INTLIT:{1}
+(VAR i)
+)
+)
+(VAR i)
+)
+
+ENDIF
+
+ENDFUNDECL recursionTest
+
+FUNDECL tailRecursionTest i  (int):
+ LABEL .tailcallSYM26:
+IF (IntAnd (IntEq INTLIT:{100}
+(VAR i)
+)
+) THEN
+   (VAR i)
+
+ELSE   (ASSIGN (VAR i) (IntAdd INTLIT:{1}
+(VAR i)
+))
+(GOTO .tailcallSYM26)
+
+ENDIF
+
+ENDFUNDECL tailRecursionTest
+
+FUNDECL main  (int):
+ (FUNCALL testTrivial )
+(FUNCALL id INTLIT:{30}
+)
+(FUNCALL testVars )
+(FUNCALL id INTLIT:{-10}
+)
+(FUNCALL testArgs INTLIT:{10}
+INTLIT:{5}
+)
+(FUNCALL id INTLIT:{50}
+)
+(FUNCALL testArgsAndVars INTLIT:{10}
+)
+(FUNCALL id INTLIT:{5}
+)
+(FUNCALL testLogic )
+(FUNCALL id INTLIT:{1}
+)
+(FUNCALL float2int FLOATLIT:{10.500000}
+)
+(FUNCALL id INTLIT:{10}
+)
+(FUNCALL int2float INTLIT:{20}
+)
+(FUNCALL idf CAST from int to float: INTLIT:{20}
+)
+(FUNCALL floatMath CAST from int to float: INTLIT:{50}
+CAST from int to float: INTLIT:{5}
+)
+(FUNCALL idf FLOATLIT:{-27.000000}
+)
+(FUNCALL loopTest INTLIT:{10}
+)
+(FUNCALL idf CAST from int to float: INTLIT:{10}
+)
+(FUNCALL floatComp )
+(FUNCALL idf FLOATLIT:{113.906250}
+)
+(FUNCALL notTest )
+(FUNCALL id INTLIT:{0}
+)
+(FUNCALL ifTest INTLIT:{27}
+)
+(FUNCALL id INTLIT:{10}
+)
+(FUNCALL ifTest INTLIT:{8}
+)
+(FUNCALL id INTLIT:{5}
+)
+(FUNCALL ifTest INTLIT:{-8}
+)
+(FUNCALL id INTLIT:{8}
+)
+(FUNCALL add INTLIT:{5}
+INTLIT:{10}
+)
+(FUNCALL id INTLIT:{15}
+)
+(FUNCALL sub INTLIT:{5}
+INTLIT:{10}
+)
+(FUNCALL id INTLIT:{5}
+)
+(FUNCALL test INTLIT:{1}
+)
+(FUNCALL id INTLIT:{0}
+)
+(FUNCALL sum4 INTLIT:{4}
+INTLIT:{3}
+INTLIT:{2}
+INTLIT:{1}
+)
+(FUNCALL id INTLIT:{10}
+)
+(FUNCALL refTest INTLIT:{15}
+)
+(FUNCALL id INTLIT:{20}
+)
+(FUNCALL refTest2 INTLIT:{-5}
+)
+(FUNCALL id INTLIT:{15}
+)
+(FUNCALL refTest3 )
+(FUNCALL id INTLIT:{13}
+)
+(FUNCALL testArray )
+(FUNCALL id INTLIT:{2}
+)
+INTLIT:{-1}
+
+ENDFUNDECL main
+

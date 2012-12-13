@@ -1,0 +1,16 @@
+Things to add (short term):
+floating point type
+Module system
+Making local labels would be nice
+None type
+
+(longer term)
+Globals/consts
+Inline assembly!
+Array and pointer types
+For loops
+elif's
+
+
+I think that we ARE going to need a None type, something that means "No valid
+return type".  Even OCaml has one, unit.  So...

@@ -1,0 +1,116 @@
+Design things to think about:
+Arrays and structures and stuff should ALL be done through implicit pointers!
+"local" and "new" are just different allocators, local going on the stack.
+
+Structures = objects?  Few reasons not to, really, and it makes parametric
+polymorphism less important (though still vital for containers to work right).
+It also makes allocation nicer.
+
+Speaking of allocation, learn from Cocoa.  Explicit refcounting, reference
+pools, et cetera.  It looks VERY nice.  It doesn't eliminate memory leaks, but
+does eliminate dangling pointers, and doing it manually is much more efficient
+and flexible than dynamically.
+
+
+
+
+It'd be nice to reach the break-even point ASAP.  For that, I need references,
+globals, arrays, structures, and some library stuff.
+Tagged unions and parametric polymorphism and first-class functions MIGHT be
+nice to have, too.  Typedefs and strings, too.
+
+Immediate ideas for Dumblang (in rough order):
+*References
+*References to arrays of any size (type refarray?)
+*Different sized types
+*Globals
+*Arrays
+*Structures/records
+*Typedefs
+*Module paths and automatic dependancy finding for compiler and linker
+*Standard library (chiefly memory and I/O)
+*C FFI
+*Principle of Least Surprise...
+
+
+Future ideas for Dumblang, for when it evolves into Sunrise: 
+*Inner functions
+*typeof operator???
+*sizeof operator?  Is it necessary?
+*Parametric polymorphism --explicit, like Eiffel, boxes large types
+*Tagged unions
+*Explicit, but hopefully more flexible memory management.
+*Exceptions
+*Erlang-ish bitstructs: Memory layout should not follow structure layout UNLESS
+SPECIFIED!
+*Tuples?
+*Asm
+*Higher-order functions.  I don't think closures can be done, though.
+*Array ranges?
+*Macros, code-as-data, eval function...
+*Loose duck typing?  Optional typedefs a la Lisp?
+*Dynamic/smart linking?
+*Debugger support
+*Config files with library locations, etc.
+*Array/number ranges?
+*Something in X86nasm.module2str has greater than O(N) complexity
+
+*Nifty dynamic REP loop, maybe.
+
+Object system ideas:
+There are basically 4 object systems we can make:
+Java-ish: static, simple, swift
+Haskell-ish: Static, flexible, swift, nifty
+Objective C-ish: More dynamic, more powerful, smalltalkish, slower
+Io/Self-ish: Prototype based.  Just plain cool.  Might not be too fast.
+CLOS: Multiple dispatch.  Flexible as hell.  No clue if it can even be done.
+
+Fing is, numbers 2 and 3 can probably be implemented without actually changing
+the compiler.  Then we just sprinkle syntactic sugar over the top, and voila!
+
+
+Dynamicness:
+Conversation with machatter at 2006-03-26 18:08:53 on icefox192 (aim)
+(18:09:04) icefox192: Do you have time for a thought-experiment in programming?
+(18:09:25) MacHatter: I think I do.
+(18:09:35) icefox192: Okay.  This is just me speculating at random, mind.
+(18:10:13) MacHatter: *nods* I spent a fair amount of time this weekend fiddling with my chat console, creating a new variant.
+(18:10:29) icefox192: I am writing a programming language that is about the same level of abstraction as C.  So, performance and such is a priority.
+(18:11:35) icefox192: Now, it'd be nice if, using this language, one was able to invoke the compiler as a library.  Feed it a string or whatever, a function or module or whatever pops out, at run-time.  You can then call this function and it acts just like it should.
+(18:12:01) MacHatter: *slight nod*
+(18:13:40) icefox192: My problem is that last bit.  The function has to know where all the other functions in the program are, at run-time.  I could use a dispatch table, with each function call involving a look-up in some hashtable or something, but that'd slow down every function call.
+(18:14:25) icefox192: And I think I just figured out the answer, but go on saying what you're saying.
+(18:14:46) MacHatter: Would you be able to compile a function (call it F) during runtime, then access it during the runtime compilation of another block of code?
+(18:14:55) icefox192: Yep!
+(18:15:10) icefox192: It'd be nice if I didn't have to write a whole full-blown dynamic linker, though.
+(18:15:26) icefox192: But yes, if you compile a function F, then make another one G afterwards, G should be able to call F.
+(18:15:49) MacHatter: I suspect you kinda would.  Consider the situation where you define function F in one call and define a different function F in a second call.
+(18:16:18) icefox192: BRB, door.
+(18:16:22) MacHatter: (And both functions have the same name)
+(18:17:52) icefox192: Okay, here's an idea.  You compile your program like normal, and it has an array stuck somewhere in it that lists each function, and the address of it.
+(18:18:26) MacHatter: (You run your train of thought, I'll run mine, and we can sort when done)
+(18:18:59) icefox192: When you compile a new function at run-time, it's name and address is stuck in that array.  The assembler/linker/whatever then looks up the locations of functions in that array when it's making the new function.
+(18:19:30) icefox192: The only disadvantage of that is you can't (easily) redefine old functions...  unless you have it change the old function to jump immediately to the new one, which would work peachy, actually.
+(18:19:34) MacHatter: *nods* Basically, your program knows how to look at its own linker table.
+(18:20:12) icefox192: Yes!  Which is kinda keen since we don't have to grovel through the object file and build the linker table the hard way.
+(18:21:52) MacHatter: What if you left the linker table as is?  Then, when you compile a code block, you get an object that contains a linker table, containing all the code/data blocks defined in the object.
+(18:22:02) MacHatter: (the object as the return)
+(18:22:58) icefox192: What would the point be?  How would it be better than just adding 'em to the old linker table?
+(18:24:38) MacHatter: I'm not certain if it's possible to alter the existing linker table on the fly for one reason.  For another, you may wish to use objects A and B when building object C, but not use object D (which has symbol conflicts with A)
+(18:24:56) MacHatter: This would (basically) give you static linking
+(18:26:15) icefox192: Well, the linker table will be stuck in the data segment, and any additions to it can be dynamically allocated.  ...hm, I have manual memory management, so that will be fun.  <_<  Anyway, I have a module system, so symbol conflicts hopefully shouldn't be easy to do.  If they happen, it probably just /should/ be an error.
+(18:26:41) MacHatter: *nods* I don't know what other logic you have planned.
+(18:28:35) MacHatter: The next step along my train of thought would be dynamic linking-basically the ability to use object A with object C one time a method in object C is invoked, and object B the next time.
+(18:28:44) icefox192: *nodnods*  Anyway, I gotta go now.
+(18:28:54) MacHatter: *nods* I hope it helped.
+(18:28:56) icefox192: Thank you.  I'll mess around with the idea a bit and see what pops out.  *snugs*
+(18:28:58) icefox192: It did!
+(18:29:03) MacHatter: *purrs*
+
+
+
+Application things:
+Standard library
+Unit-test framework?
+
+...hrm.  Lisp as a system language just seems to be such a seductive idea...

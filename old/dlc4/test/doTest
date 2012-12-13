@@ -1,0 +1,9 @@
+#!/bin/sh
+
+../dlc testlib.dl 
+../dlc test3.dl
+nasm -g -f elf testlib.asm
+nasm -g -f elf test3.asm
+gcc -o test3 -g dllib.o dllibc.o testlib.o test3.o
+
+./test3

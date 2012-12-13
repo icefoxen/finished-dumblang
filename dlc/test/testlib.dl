@@ -1,0 +1,19 @@
+use test3
+export add, sub, test, sum4
+
+; Modules can have back-references!  W00t!  Suck this, OCaml!
+func add x int, y int (int):
+   (test3:addStuff x y)
+end
+
+func sub x int, y int (int):
+   (- x y)
+end
+
+func test x int (int):
+   (= x 0)
+end
+
+func sum4 x int, y int, z int, a int (int):
+   (+ x y z a)
+end

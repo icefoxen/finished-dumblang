@@ -1,0 +1,23 @@
+Future ideas for Dumblang, for when it evolves into Sunrise:
+
+*typeof operator???
+*sizeof operator?  Is it necessary?
+*Parametric polymorphism --explicit, like Eiffel, boxes large types
+*Tagged unions
+*Explicit, but hopefully more flexible memory management.
+*Exceptions
+*Erlang-ish bitstructs: Memory layout should not follow structure layout UNLESS
+SPECIFIED!
+*Tuples?
+*Asm
+*Higher-order functions.  I don't think closures can be done, though.
+
+Object system ideas:
+There are basically 4 object systems we can make:
+Java-ish: static, simple, swift
+Objective C-ish: More dynamic, more powerful, smalltalkish, slower
+Io/Self-ish: Prototype based.  Just plain cool.  Might not be too fast.
+CLOS: Multiple dispatch.  Flexible as hell.  No clue if it can even be done.
+
+
+...hrm.  Lisp as a system language just seems to be such a seductive idea...

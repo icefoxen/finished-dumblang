@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# This is a rather sucky way of doing this, but oh well.
+# I hate build systems.
+FILES="errorReport.cmo syntree.cmo parse.cmo lex.cmo \
+       symtbl.cmo codegen.cmo semant.cmo x86asm.ml main.cmo"
+
+OPTFILES="errorReport.cmx syntree.cmx parse.cmx lex.cmx \
+       symtbl.cmx codegen.cmx semant.cmx x86asm.ml main.cmx"
+
+OCAMLLINK=ocamlc.opt
+OCAMLOPTLINK=ocamlopt.opt
+TARGET=dlc
+
+$OCAMLLINK -g -o $TARGET $FILES
+#$OCAMLOPTLINK -o $TARGET $OPTFILES

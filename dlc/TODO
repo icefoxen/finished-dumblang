@@ -1,0 +1,55 @@
+TO FIX:
+Modules.getModuleFromFile should try to compile the given module if the .dli
+doesn't exist
+Logical not still is broken.
+Not sure array literal type inference does the right thing
+floating point comparison breaks?
+We sorta need to be able to assign to arrays.  (@ arr 0) <- foo
+
+Arrays and structs should always be referred to through pointers.
+
+Tuples, now...  Well, returning tuples = multiple return types, so that's nice.
+Tuples I think can be put on the stack, more or less safely.
+You could just not bother with tuples as an abstraction, and be able to
+return things directly.  That'd work too.  Might be easier.  Infact, probably
+would.
+
+It'd be nice to warn of unused args and variables.
+
+TODO, in no real order
+None type
+Arrays
+Constants/globals
+Strings
+Structs
+Typedefs
+Multiple return values, _ ignored-value.
+Default func args
+Function types
+Parametric polymorphism
+
+
+(longer term)
+Inline assembly!
+For loops
+Short-circuit and and or
+Large ints and floats
+Enums
+sets
+number ranges?
+Complex numbers and ratios
+Bignums
+Bitwise ops
+Pattern matching
+Nested functions and lambdas
+Exceptions
+Docstrings
+Check references != NULL before dereferencing.  Throw an exception if so
+
+
+I think that we ARE going to need a None type, something that means "No valid return type".  Even OCaml has one, unit.  So...  I'm not sure we need/want an actual value of that type, though.
+
+Hokay...  Eventually we also want variable-size types.  Then we want to be
+able to return things bigger than one word.  This effectively gets us multiple
+return values; especially in conjunction with tuples.
+In fact, tuples can be used to pass arguments on the stack as well... hmmmm.  

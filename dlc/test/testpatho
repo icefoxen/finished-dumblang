@@ -1,0 +1,8 @@
+#!/bin/sh
+python patho.py
+time ../dlc patho.dl
+echo Done compiling...
+dllink patho
+echo Running...
+time ./patho
+echo Done!

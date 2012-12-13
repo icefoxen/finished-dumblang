@@ -1,0 +1,10 @@
+;  Interface file for: test3
+;  WARNING!  This file is machine-generated.  DO NOT EDIT BY HAND, please.
+;  The module reader doesn't do semantic checks, so be nice to it.  Thanks.
+
+use testlib
+
+
+func id  x int (int): INTERFACE end
+func idf  x float (float): INTERFACE end
+func addStuff  x int, y int (int): INTERFACE end

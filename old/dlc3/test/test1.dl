@@ -1,0 +1,78 @@
+func returnStuff a int (int):
+   a
+end 
+
+func isGreaterThan5 a int (int):
+   (> a 5)
+end
+
+func isGreaterThan10 a int (int):
+   if (> a 10) then
+      1
+   else
+      0
+   end
+end
+
+
+func addNums a int, b int, c int (int):
+   (+ a (max b c))
+end
+
+func max x int, y int (int):
+   if (< x y) then
+      y
+   else
+      x
+   end
+end
+
+
+func recFact x int (int):
+   if (< x 2) then
+      1
+   else
+      (* x (recFact (- x 1)))
+   end
+end
+
+
+func iterFact x int (int):
+   var ret int: 1
+   var y int: x
+   while (> y 1) do
+      ret: (* ret y)
+      y: (- y 1)
+   end
+   ret
+end
+
+func fib x int (int):
+   if (< x 2) then
+      1
+   else
+      (+ (fib (- x 1)) (fib (- x 2)))
+   end
+end
+
+func silliness (int):
+   (= 10 10)
+end
+
+func main (int):
+   (addNums 5 10 15)
+   (max 300 400)
+   (returnStuff 91)
+   (isGreaterThan5 0)
+   (isGreaterThan5 20)
+   (isGreaterThan10 0)
+   (isGreaterThan10 20)
+   (iterFact 10)
+   (recFact 10)
+
+   (silliness)
+
+   ;(fib 5)
+
+end
+

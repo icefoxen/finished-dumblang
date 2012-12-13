@@ -1,0 +1,103 @@
+Okay, now that we have a basis of Dumblang, we start to improve on it.  The
+first of these improvements will be a floating-point number type, as a lead-in
+to a full type system
+
+We will have: integers and floating point numbers, both 32 bits.
+
+The general featureset is unchanged:
+Line and block comments
+Functions w/ parameters and returns
+If/else
+while loop
+Logic/math
+Local variables
+
+Everything is an expression.  The compiler is multi-pass, so there is no need
+for forward-declerations.  It automatically prints out the return value of
+every function, since there is no library or module system for IO.  The last
+value of each function is automatically returned.
+
+It currently generates moderately crappy code for 32-bit x86.  Return values
+of every expression and function get put in eax.  No other register is really
+used; all computation of intermediate values happens on the stack.  Function
+arguments are passed on the stack by the caller, and cleaned up by the caller.  
+
+
+The syntax for type-declerations will be, perhaps, quite C-ish with no
+extranious punctuation.  However, now that we are on this path, we should be
+careful to make it expandable...
+
+Any expression that returns an int to something expecting a float has the
+result automatically turned into a float, but anything returning a float to
+something that expects an int needs an explicit cast.  The automatic-casting
+rules should involve /loss of precision/.
+The syntax of this cast is...
+|float expr|
+
+These are other possibilities, but unnecessary so far.
+(cast float x)
+{float x}
+[float x]
+float!x   --might also be nice.  Whichever is less ambiguous, I guess.
+
+I think that container types will have OCaml-ish syntax; int array or
+foostruct list or so on.
+
+Not too happy about the return decl dangling way out there, but I'm sick of
+messing with it.
+Hm, just put parens around it.  Now we have the opposite of the traditional
+c-ish "func Foo( x int, y float ) int:", and I might like it better...
+
+func Foo x int, y float (int):   ; Returns an int
+   var a int: 10
+   var b float: 20.0
+   if (and (/= a b) (or (= a b) (> a b) (< a b)) 
+                    (xor (>= a b) (<= a b))) then
+      b: a
+      a: |float b|
+      (Foo x y)
+   end
+   while (= b 1000) do  ; 1000 becomes 1000.0
+      b: (+ b (- 10 (* 5 (/ 1 (% 5 12)))))
+   end
+   a
+end
+
+This function demonstrates every single feature in the language.
+
+So.  This is Dumblang.  It's very small, very simple, and it might even be
+Turing-compete.  However, it is finished, and it works, and that is much more
+than can be said for any of my other languages.
+
+-Simon Heath, 12/12/2005
+
+
+
+
+RANDOM NOTES
+
+Would be smart to have:
+Does it catch integer overflow?  Can it be done efficiently?
+Elif's wouldn't be a bad idea.
+Nested functions could be done pretty easily (right??!), as could blocks.
+
+
+Things this intentionally does not have:
+Optimization
+Constants or global variables
+Data types (this is the biggie)
+Polymorphism
+Arrays
+Structures
+Strings
+Tagged unions
+Pointers
+Dynamic allocation
+More complicated for/foreach/elseif structures
+Exceptions
+Module system
+Object system
+A standard library
+Complicated syntax (operator precedence counts as complicated :-)
+
+Syntactic sugar like default args, variable-length args, and named args.

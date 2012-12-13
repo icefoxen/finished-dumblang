@@ -1,0 +1,5 @@
+#!/bin/sh
+nasm -f elf dllib.asm
+nasm -f elf -g $1.asm
+gcc -c dllibc.c
+gcc -o $1 dllib.o dllibc.o $1.o

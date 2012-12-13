@@ -1,0 +1,9 @@
+#!/bin/sh
+TESTFILE=test3
+
+cd ..
+build
+dlc test/$TESTFILE.dl
+cd test
+dllink $TESTFILE
+$TESTFILE

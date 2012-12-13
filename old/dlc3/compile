@@ -1,0 +1,18 @@
+#!/bin/sh
+
+
+FILES="errorReport.ml syntree.ml parse.mli parse.ml lex.ml \
+       symtbl.ml modules.ml ir.ml fpConverter.ml codegenHelp.ml codegen.ml \
+       semant.ml x86nasm.ml main.ml"
+
+OCAMLYACC=ocamlyacc
+OCAMLLEX=ocamllex
+OCAMLC=ocamlc
+OCAMLOPT=ocamlopt
+
+$OCAMLYACC -v *.mly
+$OCAMLLEX *.mll
+
+$OCAMLC -c -g $FILES
+#$OCAMLOPT -c $FILES
+

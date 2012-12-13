@@ -1,0 +1,42 @@
+The change needed here is:
+Re-vamp the symbol table system completely.
+If a var or function call has an external name in it, it must be resolved.
+--To do this, module headers must be imported
+If a var or function doesn't exist, it must have the imported modules checked
+to see if it exists there.
+
+If a function is on the export list, it must make sure it exists.
+
+Re-organize, like, everything into new files.  Syntree, symtbl, module, ir,
+codegen, semant...
+
+
+Things to do (short term):
+...I don't know what gets returned if an if statement has no else part, and
+fails.
+
+Module system
+None type...
+Globals/consts
+Typedefs
+
+(longer term)
+Inline assembly!
+Array and pointer types
+For loops
+elif's
+Short-circuit and and or
+
+
+I think that we ARE going to need a None type, something that means "No valid return type".  Even OCaml has one, unit.  So...  I'm not sure we need/want an actual value of that type, though.
+
+Hokay...  Eventually we also want variable-size types.  Then we want to be
+able to return things bigger than one word.  This effectively gets us multiple
+return values; especially in conjunction with tuples.
+In fact, tuples can be used to pass arguments on the stack as well... hmmmm.
+
+
+Issues:
+Logical not doesn't work.
+Floating-point comparison doesn't work
+Coercion from float to int has no rounding policy

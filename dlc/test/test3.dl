@@ -1,0 +1,233 @@
+/-
+func Foo x int, y float (int):
+   var a int <- 5
+   var b float <- 5
+   |int (+ a b)|
+end
+-/
+
+export id, idf, addStuff
+use testlib
+;import testlib2
+
+
+; We use this to print out the argument, since the compiler does it 
+; automatically at the end of each function call.
+func id x int (int):
+   x
+end
+
+func idf x float (float):
+   x
+end
+
+func addStuff x int, y int (int):
+   (+ x y)
+end
+
+func testTrivial (int):
+   (+ 10 20)
+end
+
+func testVars (int):
+   var x int <- 15
+   var y int <- 25
+   var z float <- 20
+   |int (- x y z)|
+end
+
+func testArgs x int, y int (int):
+   (* x y)
+end
+
+func testArgsAndVars x int (int):
+   var y int <- 2
+   (/ x y)
+end
+
+func testLogic (int):
+   ;(not 0)
+   (= 10 10 10)
+end
+
+func float2int f float (int):
+   |int f|
+end
+
+func floatMath f float, g float (float):
+   (- 3. (+ f (* g (/ 1. 2.))))
+end
+
+; Implicit coercion, yay?
+func int2float i int (float):
+   i           ;|float i|
+end
+
+func loopTest i int (float):
+   var j int <- i
+   var m float <- 0
+   while (< j (* i 2)) do
+      j <- (+ j 1)
+      m <- (+ m 1)
+   end
+   m
+end
+
+func floatComp (float):
+   var f float <- (* 10.0 1.5)
+   var i int <- 0
+   while (< f 100.) do
+      f <- (* f 1.5)
+      i <- (+ i 1)
+   end
+   f
+   ;(>= 19 (floatMath 5 50))
+end
+
+func notTest (int):
+   (not 1)
+end
+
+func ifTest x int (int):
+   if (> x 10) then
+      10
+   elif (> x 5) then
+      5
+   elif (> x 0) then
+      1
+   else
+      -x
+   end
+end
+
+func do_stuff (int):
+   10
+end
+
+func refTest a int (int):
+   var x ref int <- (addr a)
+   var y int <- |int x|
+   (+ 5 (! |ref int y|))   ; Holy shit, this works.
+end
+
+func refTest2 a int (int):
+   var x ref int <- (addr a)
+   (! x) <- 15
+   (! x)
+end
+
+func changeRef a ref int (int):
+   (! a) <- 13
+   91  ; No meaningful return value.
+end
+
+func refTest3 (int):
+   var a int <- 91
+   (id a)
+   (changeRef (addr a))
+   a
+end
+
+
+func testArray (int):
+   var a array int <- (1 2 3 4 5)
+   var b array array int <- ((1 2 3 4 5) (5 4 3 2 1))
+   ;(@ b 2) <- (3 2 1)
+   (@ a 1)
+end
+
+func testArray2 (array int):
+   (15 25 35)
+end
+
+func recursionTest i int (int):
+   if (= i 1) then
+      i
+   else
+      (* i (recursionTest (- i 1)))
+   end
+end
+
+func tailRecursionTest i int (int):
+   if (= i 10000000) then
+      i
+   else
+      (tailRecursionTest (+ i 1))
+   end
+end
+
+func main (int):
+   (testTrivial)
+   (id 30)
+
+   (testVars)
+   (id -10)
+
+   (testArgs 5 10)
+   (id 50)
+
+   (testArgsAndVars 10)
+   (id 5)
+
+   (testLogic)
+   (id 1)
+
+   (float2int 10.5)
+   (id 10)
+
+   (int2float 20)
+   (idf 20)
+
+   (floatMath 5 50)
+   (idf -27.0)
+
+   (loopTest 10)
+   (idf 10)
+   
+   (floatComp)
+   (idf 113.90625)
+
+   (notTest)
+   (id 0)
+
+   (ifTest 27)
+   (id 10)
+
+   (ifTest 8)
+   (id 5)
+
+   (ifTest -8)
+   (id 8)
+
+   (testlib:add 10 5)
+   (id 15)
+
+   (testlib:sub 10 5)
+   (id 5)
+
+   (testlib:test 1)
+   (id 0)
+
+   (testlib:sum4 1 2 3 4)
+   (id 10)
+
+   ;(testArray)
+   ;(id 1)
+
+   ;(testArray2)
+   ;(id 532)
+
+   (refTest 15)
+   (id 20)
+  
+   (refTest2 -5)
+   (id 15)
+
+   (refTest3)
+   (id 13)
+
+   (testArray)
+   (id 2)
+
+   -1
+end
